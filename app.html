@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="H.W Paint Shop Manager - Complete business management system">
+    <meta name="theme-color" content="#0a7ea4">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Paint Manager">
+    <title>H.W Paint Shop Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0a7ea4 0%, #0a5a84 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #0a7ea4;
+            border-bottom-color: #0a7ea4;
+        }
+
+        .tab-btn:hover {
+            color: #0a7ea4;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .form-group h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0a7ea4;
+            box-shadow: 0 0 0 3px rgba(10, 126, 164, 0.1);
+        }
+
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .autocomplete-list.active {
+            display: block;
+        }
+
+        .autocomplete-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f0f0;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #0a7ea4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #0a5a84;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(10, 126, 164, 0.3);
+        }
+
+        button.secondary {
+            background: #999;
+        }
+
+        button.secondary:hover {
+            background: #777;
+        }
+
+        button.danger {
+            background: #ef4444;
+        }
+
+        button.danger:hover {
+            background: #dc2626;
+        }
+
+        button.success {
+            background: #22c55e;
+        }
+
+        button.success:hover {
+            background: #16a34a;
+        }
+
+        button.small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .list-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .list-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .list-item:hover {
+            background: #f9f9f9;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-detail {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0a7ea4;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 1000px;
+            width: 90%;
+            margin: 20px auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .ledger-table th {
+            background: #0a7ea4;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
+        }
+
+        .ledger-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .ledger-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .ledger-summary {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0a7ea4;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .inventory-table th {
+            background: #0a7ea4;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
+        }
+
+        .inventory-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .inventory-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .items-list {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .item-row {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ddd;
+        }
+
+        .item-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-row-info {
+            flex: 1;
+        }
+
+        .item-row-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-row-detail {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .item-row-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        #ledgerContent {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        @print {
+            body {
+                background: white;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            header, .tabs, .modal-buttons, .share-options {
+                display: none;
+            }
+            .modal-content {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+            }
+            #ledgerContent {
+                padding: 0;
+            }
+            .ledger-table {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            header h1 {
+                font-size: 20px;
+            }
+
+            .item-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .item-actions button {
+                width: 100%;
+            }
+
+            .ledger-table, .inventory-table {
+                font-size: 11px;
+            }
+
+            .ledger-table th, .ledger-table td,
+            .inventory-table th, .inventory-table td {
+                padding: 6px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .item-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-row-actions {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .item-row-actions button {
+                flex: 1;
+            }
+
+            .share-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 H.W Paint Shop Manager</h1>
+            <p>Complete business management system</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('home')">📊 Home</button>
+            <button class="tab-btn" onclick="switchTab('customers')">👥 Customers</button>
+            <button class="tab-btn" onclick="switchTab('suppliers')">🏭 Suppliers</button>
+            <button class="tab-btn" onclick="switchTab('inventory')">📦 Inventory</button>
+            <button class="tab-btn" onclick="switchTab('transactions')">💰 Transactions</button>
+        </div>
+
+        <!-- HOME TAB -->
+        <div id="home" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="customerCount">0</div>
+                    <div class="stat-label">Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="supplierCount">0</div>
+                    <div class="stat-label">Suppliers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="itemCount">0</div>
+                    <div class="stat-label">Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="transactionCount">0</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS TAB -->
+        <div id="customers" class="tab-content">
+            <div class="form-group">
+                <h3>Add New Customer</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Customer Name</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name">
+                    </div>
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="tel" id="customerPhone" placeholder="Enter phone number">
+                    </div>
+                </div>
+                <button onclick="addCustomer()">Add Customer</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="customerSearch" placeholder="Search customers..." onkeyup="filterCustomers()">
+            </div>
+
+            <div class="list-container" id="customersList">
+                <div class="empty-state"><p>No customers yet</p></div>
+            </div>
+        </div>
+
+        <!-- SUPPLIERS TAB -->
+        <div id="suppliers" class="tab-content">
+            <div class="form-group">
+                <h3>Add New Supplier</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Supplier Name</label>
+                        <input type="text" id="supplierName" placeholder="Enter supplier name">
+                    </div>
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="tel" id="supplierPhone" placeholder="Enter phone number">
+                    </div>
+                </div>
+                <button onclick="addSupplier()">Add Supplier</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="supplierSearch" placeholder="Search suppliers..." onkeyup="filterSuppliers()">
+            </div>
+
+            <div class="list-container" id="suppliersList">
+                <div class="empty-state"><p>No suppliers yet</p></div>
+            </div>
+        </div>
+
+        <!-- INVENTORY TAB -->
+        <div id="inventory" class="tab-content">
+            <div class="form-group">
+                <h3>Add New Item</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Item Name</label>
+                        <input type="text" id="itemName" placeholder="Enter item name">
+                    </div>
+                    <div>
+                        <label>Initial Stock</label>
+                        <input type="number" id="itemStock" placeholder="Enter quantity" value="0">
+                    </div>
+                </div>
+                <button onclick="addItem()">Add Item</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="itemSearch" placeholder="Search items..." onkeyup="filterItems()">
+            </div>
+
+            <div id="inventoryDisplay"></div>
+        </div>
+
+        <!-- TRANSACTIONS TAB -->
+        <div id="transactions" class="tab-content">
+            <div class="form-group">
+                <h3>Add Transaction</h3>
+                <div class="form-row">
+                    <div>
+                        <label>Type</label>
+                        <select id="transactionType">
+                            <option value="sale">Sale (Customer)</option>
+                            <option value="purchase">Purchase (Supplier)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Date</label>
+                        <input type="date" id="transactionDate">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label>Name</label>
+                        <div class="autocomplete-container">
+                            <input type="text" id="transactionName" placeholder="Click to select..." onfocus="showNameSuggestions()" onkeyup="showNameSuggestions()">
+                            <div class="autocomplete-list" id="nameSuggestions"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px;">Add Items</h4>
+                    <div class="form-row">
+                        <div>
+                            <label>Item Name</label>
+                            <div class="autocomplete-container">
+                                <input type="text" id="transactionItem" placeholder="Click to select..." onfocus="showItemSuggestions()" onkeyup="showItemSuggestions()">
+                                <div class="autocomplete-list" id="itemSuggestions"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Quantity</label>
+                            <input type="number" id="transactionQty" placeholder="Qty" value="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label>Rate</label>
+                            <input type="number" id="transactionRate" placeholder="Price" value="0" onchange="calculateTotal()">
+                        </div>
+                        <div>
+                            <label>Total</label>
+                            <input type="number" id="transactionTotal" placeholder="Total" readonly>
+                        </div>
+                    </div>
+                    <button onclick="addItemToTransaction()" style="width: 100%;">+ Add Item</button>
+                </div>
+
+                <div id="itemsList" class="items-list" style="display: none;">
+                    <h4 style="margin-bottom: 10px;">Items in this transaction:</h4>
+                    <div id="itemsContainer"></div>
+                </div>
+
+                <button onclick="saveTransaction()" style="width: 100%; background: #22c55e; margin-top: 20px;">💾 Save Transaction</button>
+            </div>
+
+            <div class="list-container" id="transactionsList">
+                <div class="empty-state"><p>No transactions yet</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT CUSTOMER MODAL -->
+    <div id="editCustomerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Customer</div>
+            <div class="form-row">
+                <div>
+                    <label>Name</label>
+                    <input type="text" id="editCustomerName">
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <input type="tel" id="editCustomerPhone">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="saveCustomerEdit()">Save</button>
+                <button class="secondary" onclick="closeModal('editCustomerModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT SUPPLIER MODAL -->
+    <div id="editSupplierModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Supplier</div>
+            <div class="form-row">
+                <div>
+                    <label>Name</label>
+                    <input type="text" id="editSupplierName">
+                </div>
+                <div>
+                    <label>Phone</label>
+                    <input type="tel" id="editSupplierPhone">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="saveSupplierEdit()">Save</button>
+                <button class="secondary" onclick="closeModal('editSupplierModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT ITEM MODAL -->
+    <div id="editItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Edit Item</div>
+            <div class="form-row">
+                <div>
+                    <label>Name</label>
+                    <input type="text" id="editItemName">
+                </div>
+                <div>
+                    <label>Stock</label>
+                    <input type="number" id="editItemStock">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button onclick="saveItemEdit()">Save</button>
+                <button class="secondary" onclick="closeModal('editItemModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEDGER MODAL -->
+    <div id="ledgerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="ledgerTitle">Ledger</div>
+            <div id="ledgerContent"></div>
+            <div class="share-options">
+                <button class="success" onclick="printLedger()">🖨️ Print / Save as PDF</button>
+                <button class="success" onclick="shareToWhatsApp()">📱 Share on WhatsApp</button>
+            </div>
+            <div class="modal-buttons">
+                <button class="secondary" onclick="closeModal('ledgerModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = {
+            customers: [],
+            suppliers: [],
+            items: [],
+            transactions: []
+        };
+
+        let editingId = null;
+        let currentLedgerData = null;
+        let currentTransactionItems = [];
+
+        function loadData() {
+            const saved = localStorage.getItem('paintShopData');
+            if (saved) {
+                data = JSON.parse(saved);
+            }
+            updateStats();
+        }
+
+        function saveData() {
+            localStorage.setItem('paintShopData', JSON.stringify(data));
+            updateStats();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'customers') renderCustomers();
+            if (tabName === 'suppliers') renderSuppliers();
+            if (tabName === 'inventory') renderInventory();
+            if (tabName === 'transactions') renderTransactions();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // AUTOCOMPLETE
+        function showNameSuggestions() {
+            const query = document.getElementById('transactionName').value.toLowerCase();
+            const type = document.getElementById('transactionType').value;
+            const list = type === 'sale' ? data.customers : data.suppliers;
+            
+            const filtered = list.filter(item => item.name.toLowerCase().includes(query) || query === '');
+            const suggestionsDiv = document.getElementById('nameSuggestions');
+            
+            if (filtered.length > 0) {
+                suggestionsDiv.innerHTML = filtered.map(item => 
+                    `<div class="autocomplete-item" onclick="selectName('${item.name}')">${item.name} (${item.phone})</div>`
+                ).join('');
+                suggestionsDiv.classList.add('active');
+            } else {
+                suggestionsDiv.classList.remove('active');
+            }
+        }
+
+        function showItemSuggestions() {
+            const query = document.getElementById('transactionItem').value.toLowerCase();
+            const filtered = data.items.filter(item => item.name.toLowerCase().includes(query) || query === '');
+            const suggestionsDiv = document.getElementById('itemSuggestions');
+            
+            if (filtered.length > 0) {
+                suggestionsDiv.innerHTML = filtered.map(item => 
+                    `<div class="autocomplete-item" onclick="selectItem('${item.name}')">${item.name} (Stock: ${item.stock})</div>`
+                ).join('');
+                suggestionsDiv.classList.add('active');
+            } else {
+                suggestionsDiv.classList.remove('active');
+            }
+        }
+
+        function selectName(name) {
+            document.getElementById('transactionName').value = name;
+            document.getElementById('nameSuggestions').classList.remove('active');
+        }
+
+        function selectItem(name) {
+            document.getElementById('transactionItem').value = name;
+            document.getElementById('itemSuggestions').classList.remove('active');
+        }
+
+        // CUSTOMERS
+        function addCustomer() {
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            data.customers.push({
+                id: Date.now(),
+                name,
+                phone
+            });
+
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            saveData();
+            renderCustomers();
+        }
+
+        function editCustomer(id) {
+            editingId = id;
+            const customer = data.customers.find(c => c.id === id);
+            document.getElementById('editCustomerName').value = customer.name;
+            document.getElementById('editCustomerPhone').value = customer.phone;
+            openModal('editCustomerModal');
+        }
+
+        function saveCustomerEdit() {
+            const name = document.getElementById('editCustomerName').value.trim();
+            const phone = document.getElementById('editCustomerPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const customer = data.customers.find(c => c.id === editingId);
+            customer.name = name;
+            customer.phone = phone;
+            saveData();
+            renderCustomers();
+            closeModal('editCustomerModal');
+        }
+
+        function deleteCustomer(id) {
+            if (confirm('Delete this customer?')) {
+                data.customers = data.customers.filter(c => c.id !== id);
+                saveData();
+                renderCustomers();
+            }
+        }
+
+        function showCustomerLedger(id) {
+            const customer = data.customers.find(c => c.id === id);
+            const ledger = data.transactions.filter(t => t.type === 'sale' && t.name === customer.name);
+            
+            currentLedgerData = { name: customer.name, type: 'customer', ledger };
+            generateLedger(customer.name, ledger, 'customer');
+        }
+
+        function renderCustomers() {
+            const list = document.getElementById('customersList');
+            if (data.customers.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No customers yet</p></div>';
+                return;
+            }
+
+            list.innerHTML = data.customers.map(c => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${c.name}</div>
+                        <div class="item-detail">📞 ${c.phone}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small" onclick="showCustomerLedger(${c.id})">Ledger</button>
+                        <button class="small" onclick="editCustomer(${c.id})">Edit</button>
+                        <button class="small danger" onclick="deleteCustomer(${c.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCustomers() {
+            const query = document.getElementById('customerSearch').value.toLowerCase();
+            const filtered = data.customers.filter(c => 
+                c.name.toLowerCase().includes(query) || c.phone.includes(query)
+            );
+
+            const list = document.getElementById('customersList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No customers found</p></div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(c => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${c.name}</div>
+                        <div class="item-detail">📞 ${c.phone}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small" onclick="showCustomerLedger(${c.id})">Ledger</button>
+                        <button class="small" onclick="editCustomer(${c.id})">Edit</button>
+                        <button class="small danger" onclick="deleteCustomer(${c.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // SUPPLIERS
+        function addSupplier() {
+            const name = document.getElementById('supplierName').value.trim();
+            const phone = document.getElementById('supplierPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            data.suppliers.push({
+                id: Date.now(),
+                name,
+                phone
+            });
+
+            document.getElementById('supplierName').value = '';
+            document.getElementById('supplierPhone').value = '';
+            saveData();
+            renderSuppliers();
+        }
+
+        function editSupplier(id) {
+            editingId = id;
+            const supplier = data.suppliers.find(s => s.id === id);
+            document.getElementById('editSupplierName').value = supplier.name;
+            document.getElementById('editSupplierPhone').value = supplier.phone;
+            openModal('editSupplierModal');
+        }
+
+        function saveSupplierEdit() {
+            const name = document.getElementById('editSupplierName').value.trim();
+            const phone = document.getElementById('editSupplierPhone').value.trim();
+
+            if (!name || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const supplier = data.suppliers.find(s => s.id === editingId);
+            supplier.name = name;
+            supplier.phone = phone;
+            saveData();
+            renderSuppliers();
+            closeModal('editSupplierModal');
+        }
+
+        function deleteSupplier(id) {
+            if (confirm('Delete this supplier?')) {
+                data.suppliers = data.suppliers.filter(s => s.id !== id);
+                saveData();
+                renderSuppliers();
+            }
+        }
+
+        function showSupplierLedger(id) {
+            const supplier = data.suppliers.find(s => s.id === id);
+            const ledger = data.transactions.filter(t => t.type === 'purchase' && t.name === supplier.name);
+            
+            currentLedgerData = { name: supplier.name, type: 'supplier', ledger };
+            generateLedger(supplier.name, ledger, 'supplier');
+        }
+
+        function renderSuppliers() {
+            const list = document.getElementById('suppliersList');
+            if (data.suppliers.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No suppliers yet</p></div>';
+                return;
+            }
+
+            list.innerHTML = data.suppliers.map(s => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${s.name}</div>
+                        <div class="item-detail">📞 ${s.phone}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small" onclick="showSupplierLedger(${s.id})">Ledger</button>
+                        <button class="small" onclick="editSupplier(${s.id})">Edit</button>
+                        <button class="small danger" onclick="deleteSupplier(${s.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterSuppliers() {
+            const query = document.getElementById('supplierSearch').value.toLowerCase();
+            const filtered = data.suppliers.filter(s => 
+                s.name.toLowerCase().includes(query) || s.phone.includes(query)
+            );
+
+            const list = document.getElementById('suppliersList');
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No suppliers found</p></div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(s => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${s.name}</div>
+                        <div class="item-detail">📞 ${s.phone}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small" onclick="showSupplierLedger(${s.id})">Ledger</button>
+                        <button class="small" onclick="editSupplier(${s.id})">Edit</button>
+                        <button class="small danger" onclick="deleteSupplier(${s.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // INVENTORY
+        function addItem() {
+            const name = document.getElementById('itemName').value.trim();
+            const stock = parseInt(document.getElementById('itemStock').value) || 0;
+
+            if (!name) {
+                alert('Please enter item name');
+                return;
+            }
+
+            data.items.push({
+                id: Date.now(),
+                name,
+                stock
+            });
+
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemStock').value = '0';
+            saveData();
+            renderInventory();
+        }
+
+        function editItem(id) {
+            editingId = id;
+            const item = data.items.find(i => i.id === id);
+            document.getElementById('editItemName').value = item.name;
+            document.getElementById('editItemStock').value = item.stock;
+            openModal('editItemModal');
+        }
+
+        function saveItemEdit() {
+            const name = document.getElementById('editItemName').value.trim();
+            const stock = parseInt(document.getElementById('editItemStock').value) || 0;
+
+            if (!name) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const item = data.items.find(i => i.id === editingId);
+            item.name = name;
+            item.stock = stock;
+            saveData();
+            renderInventory();
+            closeModal('editItemModal');
+        }
+
+        function deleteItem(id) {
+            if (confirm('Delete this item?')) {
+                data.items = data.items.filter(i => i.id !== id);
+                saveData();
+                renderInventory();
+            }
+        }
+
+        function renderInventory() {
+            const display = document.getElementById('inventoryDisplay');
+            
+            if (data.items.length === 0) {
+                display.innerHTML = '<div class="empty-state"><p>No items yet</p></div>';
+                return;
+            }
+
+            let html = '<div class="form-group"><h3>Inventory Status</h3><table class="inventory-table"><thead><tr><th>S.No</th><th>Item Name</th><th>Current Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+            
+            data.items.forEach((item, index) => {
+                const status = item.stock < 5 ? '🔴 Low Stock' : '🟢 OK';
+                const statusColor = item.stock < 5 ? '#ef4444' : '#22c55e';
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td><strong>${item.stock}</strong></td>
+                    <td style="color: ${statusColor}; font-weight: 600;">${status}</td>
+                    <td><button class="small" onclick="editItem(${item.id})">Edit</button> <button class="small danger" onclick="deleteItem(${item.id})">Delete</button></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            display.innerHTML = html;
+        }
+
+        function filterItems() {
+            const query = document.getElementById('itemSearch').value.toLowerCase();
+            const filtered = data.items.filter(i => i.name.toLowerCase().includes(query));
+
+            const display = document.getElementById('inventoryDisplay');
+            
+            if (filtered.length === 0) {
+                display.innerHTML = '<div class="empty-state"><p>No items found</p></div>';
+                return;
+            }
+
+            let html = '<div class="form-group"><h3>Inventory Status</h3><table class="inventory-table"><thead><tr><th>S.No</th><th>Item Name</th><th>Current Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+            
+            filtered.forEach((item, index) => {
+                const status = item.stock < 5 ? '🔴 Low Stock' : '🟢 OK';
+                const statusColor = item.stock < 5 ? '#ef4444' : '#22c55e';
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td><strong>${item.stock}</strong></td>
+                    <td style="color: ${statusColor}; font-weight: 600;">${status}</td>
+                    <td><button class="small" onclick="editItem(${item.id})">Edit</button> <button class="small danger" onclick="deleteItem(${item.id})">Delete</button></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            display.innerHTML = html;
+        }
+
+        // MULTIPLE ITEMS TRANSACTION
+        function addItemToTransaction() {
+            const item = document.getElementById('transactionItem').value.trim();
+            const qty = parseInt(document.getElementById('transactionQty').value) || 0;
+            const rate = parseFloat(document.getElementById('transactionRate').value) || 0;
+            const total = qty * rate;
+
+            if (!item || qty <= 0 || rate <= 0) {
+                alert('Please fill all fields correctly');
+                return;
+            }
+
+            currentTransactionItems.push({
+                id: Date.now(),
+                item,
+                qty,
+                rate,
+                total
+            });
+
+            document.getElementById('transactionItem').value = '';
+            document.getElementById('transactionQty').value = '1';
+            document.getElementById('transactionRate').value = '0';
+            document.getElementById('transactionTotal').value = '';
+
+            renderTransactionItems();
+        }
+
+        function renderTransactionItems() {
+            const container = document.getElementById('itemsContainer');
+            const listDiv = document.getElementById('itemsList');
+
+            if (currentTransactionItems.length === 0) {
+                listDiv.style.display = 'none';
+                return;
+            }
+
+            listDiv.style.display = 'block';
+            let totalAmount = 0;
+
+            container.innerHTML = currentTransactionItems.map(item => {
+                totalAmount += item.total;
+                return `
+                    <div class="item-row">
+                        <div class="item-row-info">
+                            <div class="item-row-name">${item.item}</div>
+                            <div class="item-row-detail">${item.qty} × ₹${item.rate.toFixed(2)} = ₹${item.total.toFixed(2)}</div>
+                        </div>
+                        <div class="item-row-actions">
+                            <button class="small danger" onclick="removeTransactionItem(${item.id})">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML += `<div style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin-top: 10px; text-align: right; font-weight: bold;">Total: ₹${totalAmount.toFixed(2)}</div>`;
+        }
+
+        function removeTransactionItem(id) {
+            currentTransactionItems = currentTransactionItems.filter(item => item.id !== id);
+            renderTransactionItems();
+        }
+
+        function saveTransaction() {
+            const type = document.getElementById('transactionType').value;
+            const date = document.getElementById('transactionDate').value;
+            const name = document.getElementById('transactionName').value.trim();
+
+            if (!date || !name || currentTransactionItems.length === 0) {
+                alert('Please fill all fields and add at least one item');
+                return;
+            }
+
+            currentTransactionItems.forEach(item => {
+                const itemObj = data.items.find(i => i.name.toLowerCase() === item.item.toLowerCase());
+                if (itemObj) {
+                    if (type === 'sale') {
+                        itemObj.stock -= item.qty;
+                    } else {
+                        itemObj.stock += item.qty;
+                    }
+                }
+
+                data.transactions.push({
+                    id: Date.now() + Math.random(),
+                    type,
+                    date,
+                    name,
+                    item: item.item,
+                    qty: item.qty,
+                    rate: item.rate,
+                    total: item.total
+                });
+            });
+
+            currentTransactionItems = [];
+            document.getElementById('transactionDate').value = '';
+            document.getElementById('transactionName').value = '';
+            document.getElementById('itemsList').style.display = 'none';
+
+            saveData();
+            renderTransactions();
+            renderInventory();
+            alert('Transaction saved successfully!');
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('Delete this transaction?')) {
+                const trans = data.transactions.find(t => t.id === id);
+                const itemObj = data.items.find(i => i.name.toLowerCase() === trans.item.toLowerCase());
+                
+                if (itemObj) {
+                    if (trans.type === 'sale') {
+                        itemObj.stock += trans.qty;
+                    } else {
+                        itemObj.stock -= trans.qty;
+                    }
+                }
+
+                data.transactions = data.transactions.filter(t => t.id !== id);
+                saveData();
+                renderTransactions();
+                renderInventory();
+            }
+        }
+
+        function renderTransactions() {
+            const list = document.getElementById('transactionsList');
+            if (data.transactions.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No transactions yet</p></div>';
+                return;
+            }
+
+            list.innerHTML = data.transactions.map(t => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${t.type === 'sale' ? '📤 Sale' : '📥 Purchase'} - ${t.name}</div>
+                        <div class="item-detail">${t.date} | ${t.item} | ${t.qty} × ₹${t.rate} = ₹${t.total.toFixed(2)}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="small danger" onclick="deleteTransaction(${t.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // LEDGER GENERATION
+        function generateLedger(name, ledger, type) {
+            document.getElementById('ledgerTitle').textContent = `${name} - ${type === 'customer' ? 'Customer' : 'Supplier'} Ledger`;
+            
+            let totalDebit = 0, totalCredit = 0, balance = 0;
+            
+            let html = '<table class="ledger-table"><thead><tr><th>S.No</th><th>Date</th><th>Item</th><th>Qty</th><th>Rate</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead><tbody>';
+            
+            ledger.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((entry, index) => {
+                const debit = type === 'customer' ? entry.total : 0;
+                const credit = type === 'supplier' ? entry.total : 0;
+                
+                totalDebit += debit;
+                totalCredit += credit;
+                balance = totalDebit - totalCredit;
+                
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${entry.date}</td>
+                    <td>${entry.item}</td>
+                    <td>${entry.qty}</td>
+                    <td>₹${entry.rate.toFixed(2)}</td>
+                    <td>${debit > 0 ? '₹' + debit.toFixed(2) : '-'}</td>
+                    <td>${credit > 0 ? '₹' + credit.toFixed(2) : '-'}</td>
+                    <td><strong>₹${balance.toFixed(2)}</strong></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            
+            html += '<div class="ledger-summary">';
+            html += `<div class="summary-item"><div class="summary-label">Total Debit</div><div class="summary-value">₹${totalDebit.toFixed(2)}</div></div>`;
+            html += `<div class="summary-item"><div class="summary-label">Total Credit</div><div class="summary-value">₹${totalCredit.toFixed(2)}</div></div>`;
+            html += `<div class="summary-item"><div class="summary-label">Balance</div><div class="summary-value" style="color: ${balance >= 0 ? '#22c55e' : '#ef4444'}">₹${balance.toFixed(2)}</div></div>`;
+            html += '</div>';
+            
+            document.getElementById('ledgerContent').innerHTML = html;
+            openModal('ledgerModal');
+        }
+
+        // PRINT / SAVE AS PDF
+        function printLedger() {
+            window.print();
+        }
+
+        // SHARE TO WHATSAPP
+        function shareToWhatsApp() {
+            if (!currentLedgerData) return;
+            
+            const { name, type, ledger } = currentLedgerData;
+            let text = `*${name} - ${type === 'customer' ? 'Customer' : 'Supplier'} Ledger*\n\n`;
+            
+            let totalDebit = 0, totalCredit = 0, balance = 0;
+            
+            text += `S.No | Date | Item | Qty | Rate | Debit | Credit | Balance\n`;
+            text += `─────────────────────────────────────────────────────\n`;
+            
+            ledger.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((entry, index) => {
+                const debit = type === 'customer' ? entry.total : 0;
+                const credit = type === 'supplier' ? entry.total : 0;
+                
+                totalDebit += debit;
+                totalCredit += credit;
+                balance = totalDebit - totalCredit;
+                
+                text += `${index + 1} | ${entry.date} | ${entry.item} | ${entry.qty} | ₹${entry.rate} | ${debit > 0 ? '₹' + debit.toFixed(2) : '-'} | ${credit > 0 ? '₹' + credit.toFixed(2) : '-'} | ₹${balance.toFixed(2)}\n`;
+            });
+            
+            text += `─────────────────────────────────────────────────────\n`;
+            text += `Total Debit: ₹${totalDebit.toFixed(2)}\n`;
+            text += `Total Credit: ₹${totalCredit.toFixed(2)}\n`;
+            text += `Balance: ₹${balance.toFixed(2)}\n\n`;
+            text += `Generated from H.W Paint Shop Manager`;
+            
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function calculateTotal() {
+            const qty = parseInt(document.getElementById('transactionQty').value) || 0;
+            const rate = parseFloat(document.getElementById('transactionRate').value) || 0;
+            const total = qty * rate;
+            document.getElementById('transactionTotal').value = total.toFixed(2);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('transactionDate').value = today;
+            
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                const swCode = `
+                    const CACHE_NAME = 'paint-shop-v1';
+                    const urlsToCache = ['/', '/app.html'];
+                    
+                    self.addEventListener('install', event => {
+                        self.skipWaiting();
+                    });
+                    
+                    self.addEventListener('activate', event => {
+                        self.clients.claim();
+                    });
+                    
+                    self.addEventListener('fetch', event => {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(response => response || fetch(event.request))
+                                .catch(() => caches.match(event.request))
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            }
+        });
+
+        function updateStats() {
+            document.getElementById('customerCount').textContent = data.customers.length;
+            document.getElementById('supplierCount').textContent = data.suppliers.length;
+            document.getElementById('itemCount').textContent = data.items.length;
+            document.getElementById('transactionCount').textContent = data.transactions.length;
+        }
+    </script>
+</body>
+</html>
